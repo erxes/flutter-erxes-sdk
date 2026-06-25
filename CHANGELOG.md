@@ -1,3 +1,11 @@
+## 0.1.2
+
+* Fix iOS build against MessengerSDK 0.30.13: hop all `@MainActor`-isolated
+  SDK calls to the main thread, use the nested `MessengerConfig.Appearance`
+  value type, and match the non-optional `MessengerUser.customData` and
+  `ActionItem.systemIcon` signatures.
+* Bump the example app's iOS deployment target to 16.0 to satisfy the SDK.
+
 ## 0.1.1
 
 * Remove unused import in example widget test.

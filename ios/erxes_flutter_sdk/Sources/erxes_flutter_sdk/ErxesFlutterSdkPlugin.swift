@@ -47,19 +47,23 @@ public class ErxesFlutterSdkPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     case "setUser":
       setUser(call.arguments as? [String: Any] ?? [:], result: result)
     case "clearUser":
-      MessengerSDK.clearUser()
+      DispatchQueue.main.async { MessengerSDK.clearUser() }
       result(nil)
     case "showMessenger":
-      MessengerSDK.showMessenger(from: Self.topViewController())
+      DispatchQueue.main.async {
+        if let top = Self.topViewController() {
+          MessengerSDK.showMessenger(from: top)
+        }
+      }
       result(nil)
     case "hideMessenger":
-      MessengerSDK.hideMessenger()
+      DispatchQueue.main.async { MessengerSDK.hideMessenger() }
       result(nil)
     case "showLauncher":
-      MessengerSDK.showLauncher()
+      DispatchQueue.main.async { MessengerSDK.showLauncher() }
       result(nil)
     case "hideLauncher":
-      MessengerSDK.hideLauncher()
+      DispatchQueue.main.async { MessengerSDK.hideLauncher() }
       result(nil)
     default:
       result(FlutterMethodNotImplemented)
@@ -88,44 +92,43 @@ public class ErxesFlutterSdkPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     let displayMode =
       (options["displayMode"] as? String).flatMap(DisplayMode.init(rawValue:)) ?? .classic
 
-    let appearance = Appearance()
-    if let primaryColor = options["primaryColor"] as? String,
-      let color = Self.hexColor(primaryColor)
-    {
-      appearance.primaryColor = color
-    }
+    let appearance = MessengerConfig.Appearance(
+      primaryColor: (options["primaryColor"] as? String).flatMap(Self.hexColor)
+        ?? MessengerConfig.Appearance().primaryColor
+    )
 
+    let cachedCustomerId = options["cachedCustomerId"] as? String
     let homeActions = Self.parseActions(options["homeActions"])
     let drawerActions = Self.parseActions(options["drawerActions"])
 
-    MessengerSDK.configure(
-      MessengerConfig(
-        endpoint: endpoint,
-        integrationId: integrationId,
-        cachedCustomerId: options["cachedCustomerId"] as? String,
-        appearance: appearance,
-        displayMode: displayMode,
-        homeActions: homeActions,
-        drawerActions: drawerActions
+    DispatchQueue.main.async { [weak self] in
+      MessengerSDK.configure(
+        MessengerConfig(
+          endpoint: endpoint,
+          integrationId: integrationId,
+          cachedCustomerId: cachedCustomerId,
+          appearance: appearance,
+          displayMode: displayMode,
+          homeActions: homeActions,
+          drawerActions: drawerActions
+        )
       )
-    )
-
-    MessengerSDK.shared.onAction = { [weak self] id in
-      self?.actionSink?(["id": id])
+      MessengerSDK.shared.onAction = { [weak self] id in
+        self?.actionSink?(["id": id])
+      }
     }
 
     result(nil)
   }
 
   private func setUser(_ options: [String: Any], result: @escaping FlutterResult) {
-    MessengerSDK.setUser(
-      MessengerUser(
-        email: options["email"] as? String,
-        phone: options["phone"] as? String,
-        name: options["name"] as? String,
-        customData: options["customData"] as? [String: String]
-      )
+    let user = MessengerUser(
+      email: options["email"] as? String,
+      phone: options["phone"] as? String,
+      name: options["name"] as? String,
+      customData: options["customData"] as? [String: String] ?? [:]
     )
+    DispatchQueue.main.async { MessengerSDK.setUser(user) }
     result(nil)
   }
 
@@ -136,7 +139,9 @@ public class ErxesFlutterSdkPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     return list.compactMap { map in
       guard let id = map["id"] as? String, let title = map["title"] as? String else { return nil }
       // The Dart layer mirrors iosIcon into `systemIcon`.
-      let systemIcon = (map["systemIcon"] as? String) ?? (map["iosIcon"] as? String)
+      // ActionItem requires a non-optional icon; skip entries with neither.
+      guard let systemIcon = (map["systemIcon"] as? String) ?? (map["iosIcon"] as? String)
+      else { return nil }
       return ActionItem(id: id, title: title, systemIcon: systemIcon)
     }
   }
