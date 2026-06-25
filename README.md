@@ -12,12 +12,10 @@ Erxes SDKs — `MessengerSDK` (iOS) and `io.github.munkhorgilb:messenger-sdk`
 | Feature | iOS | Android |
 | --- | :---: | :---: |
 | Chat mode (full screen) | ✅ | ✅ |
-| Classic floating launcher | ✅ | ❌ (iOS-only for now) |
 | Voice messages | ✅ | ✅ |
 | `customData` on user | ✅ | ❌ (ignored by native SDK) |
 
-On Android, `showLauncher` / `hideLauncher` / `hideMessenger` resolve as no-ops so
-the shared Dart contract stays identical across platforms.
+This plugin targets **chat mode** only.
 
 ## Install
 
@@ -68,7 +66,6 @@ final sub = ErxesMessenger.onAction.listen((id) {
 await ErxesMessenger.configure(
   integrationId: 'YOUR_INTEGRATION_ID',
   endpoint: 'https://yourcompany.erxes.io', // or serverUrl / subDomain
-  displayMode: ErxesDisplayMode.chat,
   primaryColor: '#7c3aed',
   user: const ErxesUser(name: 'Jane Doe', email: 'user@example.com'),
   homeActions: const [
@@ -86,15 +83,13 @@ See [`example/`](example/) for a full settings → support → chat flow.
 | `configure({...})` | Configure and (in chat mode) present the messenger. |
 | `setUser(ErxesUser)` | Update the current customer identity. |
 | `clearUser()` | Clear the current customer identity. |
-| `showMessenger()` | Present the messenger UI. |
+| `showMessenger()` | Present the chat messenger UI. |
 | `hideMessenger()` | Dismiss the messenger (no-op on Android). |
-| `showLauncher()` / `hideLauncher()` | Show/hide the classic launcher (iOS-only). |
 | `onAction` | `Stream<String>` of tapped action ids. |
 | `onReady` | `Stream<void>` emitted when the messenger is ready. |
 
 ### Models
 
-- `ErxesDisplayMode { classic, chat }`
 - `ErxesUser({ email, phone, name, customData })`
 - `ErxesAction({ id, title, iosIcon, androidIcon })`
 
@@ -124,4 +119,3 @@ The workflow validates and runs `dart pub publish` for the tagged version.
   `flutter config --enable-swift-package-manager`, then `flutter clean` and rebuild.
 - **Android action icons missing in release** — confirm minification didn't strip
   icon classes; the bundled `consumer-rules.pro` should cover this.
-- **Classic launcher does nothing on Android** — expected; it is iOS-only.
