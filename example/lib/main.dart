@@ -79,7 +79,6 @@ class _SupportScreenState extends State<SupportScreen> {
       integrationId: kIntegrationId,
       endpoint: kEndpoint,
       displayMode: ErxesDisplayMode.chat,
-      primaryColor: '#7c3aed',
       user: const ErxesUser(name: 'Jane Doe', email: 'user@example.com'),
       homeActions: const [
         ErxesAction(

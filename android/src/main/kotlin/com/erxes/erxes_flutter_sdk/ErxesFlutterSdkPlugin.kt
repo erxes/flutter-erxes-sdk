@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.config.ActionItem
-import com.erxes.messenger.config.Appearance
 import com.erxes.messenger.config.DisplayMode
 import com.erxes.messenger.config.MessengerConfig
 import com.erxes.messenger.config.MessengerUser
@@ -143,7 +142,7 @@ class ErxesFlutterSdkPlugin :
         }
 
         val cachedCustomerId = call.argument<String>("cachedCustomerId")
-        val appearance = call.argument<String>("primaryColor")?.let { Appearance(primaryColor = it) }
+        val user = parseUser(call.argument<Map<String, Any?>>("user"))
         val homeActions = parseActions(call.argument<List<Map<String, Any?>>>("homeActions"))
         val drawerActions = parseActions(call.argument<List<Map<String, Any?>>>("drawerActions"))
 
@@ -151,7 +150,6 @@ class ErxesFlutterSdkPlugin :
             endpoint = endpoint,
             integrationId = integrationId,
             cachedCustomerId = cachedCustomerId,
-            appearance = appearance,
             // Android implements chat mode only.
             displayMode = DisplayMode.CHAT,
             homeActions = homeActions,
@@ -163,12 +161,22 @@ class ErxesFlutterSdkPlugin :
         }
 
         main.post {
+            user?.let { ErxesMessenger.setUser(it) }
             ErxesMessenger.configure(context, config)
             // Chat mode presents immediately; mirror RN behaviour.
             activity?.let { ErxesMessenger.show(it) }
             readySink?.success(null)
             result.success(null)
         }
+    }
+
+    private fun parseUser(raw: Map<String, Any?>?): MessengerUser? {
+        if (raw == null) return null
+        return MessengerUser(
+            email = raw["email"] as? String,
+            name = raw["name"] as? String,
+            phone = raw["phone"] as? String,
+        )
     }
 
     private fun setUser(call: MethodCall, result: Result) {

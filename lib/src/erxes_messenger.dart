@@ -21,7 +21,6 @@ import 'models.dart';
 ///   integrationId: 'YOUR_INTEGRATION_ID',
 ///   endpoint: 'https://yourcompany.erxes.io',
 ///   displayMode: ErxesDisplayMode.chat,
-///   primaryColor: '#7c3aed',
 ///   user: const ErxesUser(name: 'Jane Doe', email: 'user@example.com'),
 ///   homeActions: const [
 ///     ErxesAction(id: 'close', title: 'Close', iosIcon: 'xmark', androidIcon: 'Close'),
@@ -62,8 +61,8 @@ class ErxesMessenger {
   /// Configures the messenger and, in [ErxesDisplayMode.chat], presents it.
   ///
   /// Provide exactly one of [endpoint], [serverUrl] or [subDomain]
-  /// (e.g. `'company.erxes.io'`). If [user] is supplied it is forwarded via
-  /// [setUser] after configuration.
+  /// (e.g. `'company.erxes.io'`). If [user] is supplied it is forwarded with
+  /// configuration so native SDKs can identify the visitor before connecting.
   ///
   /// On Android only [ErxesDisplayMode.chat] is supported; [displayMode] is
   /// effectively ignored there.
@@ -74,7 +73,6 @@ class ErxesMessenger {
     String? subDomain,
     String? cachedCustomerId,
     ErxesDisplayMode displayMode = ErxesDisplayMode.chat,
-    String? primaryColor,
     ErxesUser? user,
     List<ErxesAction> homeActions = const <ErxesAction>[],
     List<ErxesAction> drawerActions = const <ErxesAction>[],
@@ -86,16 +84,12 @@ class ErxesMessenger {
       'subDomain': subDomain,
       'cachedCustomerId': cachedCustomerId,
       'displayMode': displayMode.name,
-      'primaryColor': primaryColor,
+      'user': user?.toMap(),
       'homeActions': homeActions.map((a) => a.toMap()).toList(),
       'drawerActions': drawerActions.map((a) => a.toMap()).toList(),
     }..removeWhere((_, value) => value == null);
 
     await _methods.invokeMethod<void>('configure', args);
-
-    if (user != null) {
-      await setUser(user);
-    }
   }
 
   /// Updates the identity of the current customer.

@@ -27,7 +27,6 @@ void main() {
       integrationId: 'abc',
       endpoint: 'https://co.erxes.io',
       displayMode: ErxesDisplayMode.chat,
-      primaryColor: '#7c3aed',
       homeActions: const [
         ErxesAction(
           id: 'close',
@@ -46,7 +45,6 @@ void main() {
     expect(args['integrationId'], 'abc');
     expect(args['endpoint'], 'https://co.erxes.io');
     expect(args['displayMode'], 'chat');
-    expect(args['primaryColor'], '#7c3aed');
     // Null optionals are stripped before crossing the channel.
     expect(args.containsKey('serverUrl'), isFalse);
     expect(args.containsKey('cachedCustomerId'), isFalse);
@@ -57,15 +55,16 @@ void main() {
     expect(home.single['systemIcon'], 'xmark');
   });
 
-  test('configure with a user also forwards setUser', () async {
+  test('configure with a user forwards it in configure args', () async {
     await ErxesMessenger.configure(
       integrationId: 'abc',
       endpoint: 'https://co.erxes.io',
       user: const ErxesUser(name: 'Jane', email: 'j@e.io'),
     );
 
-    expect(log.map((c) => c.method), ['configure', 'setUser']);
-    final userArgs = Map<String, dynamic>.from(log[1].arguments as Map);
+    expect(log.map((c) => c.method), ['configure']);
+    final args = Map<String, dynamic>.from(log.single.arguments as Map);
+    final userArgs = Map<String, dynamic>.from(args['user'] as Map);
     expect(userArgs['name'], 'Jane');
     expect(userArgs['email'], 'j@e.io');
     expect(userArgs.containsKey('phone'), isFalse);

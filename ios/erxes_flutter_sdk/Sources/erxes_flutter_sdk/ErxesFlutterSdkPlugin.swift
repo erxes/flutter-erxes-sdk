@@ -92,22 +92,20 @@ public class ErxesFlutterSdkPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     let displayMode =
       (options["displayMode"] as? String).flatMap(DisplayMode.init(rawValue:)) ?? .classic
 
-    let appearance = MessengerConfig.Appearance(
-      primaryColor: (options["primaryColor"] as? String).flatMap(Self.hexColor)
-        ?? MessengerConfig.Appearance().primaryColor
-    )
-
     let cachedCustomerId = options["cachedCustomerId"] as? String
+    let user = Self.parseUser(options["user"])
     let homeActions = Self.parseActions(options["homeActions"])
     let drawerActions = Self.parseActions(options["drawerActions"])
 
     DispatchQueue.main.async { [weak self] in
+      if let user {
+        MessengerSDK.setUser(user)
+      }
       MessengerSDK.configure(
         MessengerConfig(
           endpoint: endpoint,
           integrationId: integrationId,
           cachedCustomerId: cachedCustomerId,
-          appearance: appearance,
           displayMode: displayMode,
           homeActions: homeActions,
           drawerActions: drawerActions
@@ -146,15 +144,14 @@ public class ErxesFlutterSdkPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     }
   }
 
-  private static func hexColor(_ hex: String) -> UIColor? {
-    var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-    if value.hasPrefix("#") { value.removeFirst() }
-    guard value.count == 6, let intVal = UInt32(value, radix: 16) else { return nil }
-    return UIColor(
-      red: CGFloat((intVal >> 16) & 0xFF) / 255.0,
-      green: CGFloat((intVal >> 8) & 0xFF) / 255.0,
-      blue: CGFloat(intVal & 0xFF) / 255.0,
-      alpha: 1.0)
+  private static func parseUser(_ raw: Any?) -> MessengerUser? {
+    guard let map = raw as? [String: Any] else { return nil }
+    return MessengerUser(
+      email: map["email"] as? String,
+      phone: map["phone"] as? String,
+      name: map["name"] as? String,
+      customData: map["customData"] as? [String: String] ?? [:]
+    )
   }
 
   /// Returns the deepest visible view controller to present the messenger from.

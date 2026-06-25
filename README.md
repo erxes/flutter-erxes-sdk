@@ -66,7 +66,6 @@ final sub = ErxesMessenger.onAction.listen((id) {
 await ErxesMessenger.configure(
   integrationId: 'YOUR_INTEGRATION_ID',
   endpoint: 'https://yourcompany.erxes.io', // or serverUrl / subDomain
-  primaryColor: '#7c3aed',
   user: const ErxesUser(name: 'Jane Doe', email: 'user@example.com'),
   homeActions: const [
     ErxesAction(id: 'close', title: 'Close', iosIcon: 'xmark', androidIcon: 'Close'),

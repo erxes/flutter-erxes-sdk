@@ -1,3 +1,9 @@
+## 0.2.0
+
+* Pass `user` during configure so native SDKs identify the visitor before connecting.
+* Apply user before native messenger configuration on iOS and Android.
+* Remove `primaryColor` from the Flutter API and native bridge.
+
 ## 0.1.2
 
 * Fix iOS build against MessengerSDK 0.30.13: hop all `@MainActor`-isolated
