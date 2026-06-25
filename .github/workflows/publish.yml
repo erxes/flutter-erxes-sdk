@@ -1,0 +1,39 @@
+name: Publish to pub.dev
+
+# Publishes when you push a version tag, e.g. `v0.1.0`.
+# Requires "Automated publishing" to be enabled for this package on pub.dev,
+# configured to trust this GitHub repository (uses OIDC — no secret tokens).
+# See: https://dart.dev/tools/pub/automated-publishing
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      # Required for OIDC token exchange with pub.dev.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Fail fast before attempting to publish.
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Publish
+        run: dart pub publish --force

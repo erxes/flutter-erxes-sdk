@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Flutter plugin wrapping the native Erxes MessengerSDK for iOS.
                        DESC
-  s.homepage         = 'https://github.com/erxes/erxes-flutter-sdk'
+  s.homepage         = 'https://github.com/Munkhorgilb/flutter-sdk'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Erxes' => 'info@erxes.io' }
   s.source           = { :path => '.' }
