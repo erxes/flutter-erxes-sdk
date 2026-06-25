@@ -93,26 +93,6 @@ See [`example/`](example/) for a full settings → support → chat flow.
 - `ErxesUser({ email, phone, name, customData })`
 - `ErxesAction({ id, title, iosIcon, androidIcon })`
 
-## Releasing
-
-CI (`.github/workflows/ci.yml`) runs format, analyze and tests on every push/PR.
-
-Publishing to [pub.dev](https://pub.dev) is automated via
-`.github/workflows/publish.yml` and OIDC (no secret tokens):
-
-1. One-time: on pub.dev, enable **Automated publishing** for this package and
-   trust the `Munkhorgilb/flutter-sdk` GitHub repository
-   (see [dart.dev/tools/pub/automated-publishing](https://dart.dev/tools/pub/automated-publishing)).
-2. Bump `version:` in `pubspec.yaml` and update `CHANGELOG.md`.
-3. Tag and push:
-
-   ```bash
-   git tag v0.1.0
-   git push origin v0.1.0
-   ```
-
-The workflow validates and runs `dart pub publish` for the tagged version.
-
 ## Troubleshooting
 
 - **iOS build can't find `MessengerSDK`** — enable Swift Package Manager:
