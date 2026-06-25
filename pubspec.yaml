@@ -1,6 +1,6 @@
 name: erxes_flutter_sdk
 description: "Flutter plugin for the Erxes messenger, wrapping the native iOS and Android Erxes SDKs."
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/Munkhorgilb/flutter-sdk
 repository: https://github.com/Munkhorgilb/flutter-sdk
 issue_tracker: https://github.com/Munkhorgilb/flutter-sdk/issues
