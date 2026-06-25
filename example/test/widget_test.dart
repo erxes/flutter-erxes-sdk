@@ -1,6 +1,5 @@
 // Basic Flutter widget test for the example app.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:erxes_flutter_sdk_example/main.dart';
