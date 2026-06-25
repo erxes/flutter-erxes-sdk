@@ -31,6 +31,11 @@ jobs:
             exit 1
           fi
 
+      # setup-dart wires up the pub.dev OIDC credential when `id-token: write`
+      # is granted. flutter-action alone does not, which makes `pub publish`
+      # fall back to interactive OAuth and hang on the runner.
+      - uses: dart-lang/setup-dart@v1
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
