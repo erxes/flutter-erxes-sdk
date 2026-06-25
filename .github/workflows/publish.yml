@@ -18,6 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Guard: the pushed tag (e.g. v0.1.1) must match `version:` in pubspec.yaml.
+      # pub.dev rejects mismatches mid-publish; this fails fast with a clear message.
+      - name: Verify tag matches pubspec version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pubspec="$(grep '^version:' pubspec.yaml | awk '{print $2}')"
+          echo "tag version:     $tag"
+          echo "pubspec version: $pubspec"
+          if [ "$tag" != "$pubspec" ]; then
+            echo "::error::Tag v$tag does not match pubspec version $pubspec. Bump pubspec.yaml and re-tag."
+            exit 1
+          fi
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
