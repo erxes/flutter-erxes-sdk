@@ -17,7 +17,7 @@ let package = Package(
     // Pin to the latest published version at build time.
     .package(
       url: "https://github.com/erxes/erxes-ios-sdk.git",
-      exact: "0.30.13"
+      exact: "0.30.14"
     )
   ],
   targets: [

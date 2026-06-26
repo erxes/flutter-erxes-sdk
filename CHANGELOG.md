@@ -1,3 +1,10 @@
+## 0.3.0
+
+* iOS: pull `MessengerSDK` from CocoaPods via the `ErxesMessengerSDK` 0.30.14 pod
+  instead of requiring Swift Package Manager. The host app no longer needs
+  `flutter config --enable-swift-package-manager`.
+* Bump the SPM dependency to `erxes-ios-sdk` 0.30.14.
+
 ## 0.2.0
 
 * Pass `user` during configure so native SDKs identify the visitor before connecting.

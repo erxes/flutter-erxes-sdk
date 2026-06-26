@@ -29,13 +29,9 @@ dependencies:
 ### iOS setup
 
 - Minimum iOS **16.0**, Swift **5.9**.
-- The underlying `erxes-ios-sdk` is distributed via **Swift Package Manager only**,
-  so enable Flutter's SPM support in the host app:
-
-  ```bash
-  flutter config --enable-swift-package-manager
-  ```
-
+- The underlying `erxes-ios-sdk` ships to CocoaPods as `ErxesMessengerSDK` 0.30.14
+  and is pulled in automatically on `pod install` — no extra setup needed. (SPM
+  host apps are still supported via the bundled `Package.swift`.)
 - For voice messages, add to `ios/Runner/Info.plist`:
 
   ```xml
@@ -94,7 +90,7 @@ See [`example/`](example/) for a full settings → support → chat flow.
 
 ## Troubleshooting
 
-- **iOS build can't find `MessengerSDK`** — enable Swift Package Manager:
-  `flutter config --enable-swift-package-manager`, then `flutter clean` and rebuild.
+- **iOS build can't find `MessengerSDK`** — run `pod install` from `ios/` (or
+  `flutter clean` and rebuild) so CocoaPods fetches `ErxesMessengerSDK`.
 - **Android action icons missing in release** — confirm minification didn't strip
   icon classes; the bundled `consumer-rules.pro` should cover this.
